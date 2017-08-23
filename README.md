@@ -1,8 +1,10 @@
-Language mailgun
-==============
+Language Mailgun
+================
 
 Language Pack for building expressions and operations for working with
 the mailgun API.
+
+[mailgun-js on npm](https://www.npmjs.com/package/mailgun-js)
 
 Documentation
 -------------
