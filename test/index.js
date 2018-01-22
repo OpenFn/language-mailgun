@@ -1,87 +1,33 @@
-import { expect } from 'chai';
-
+import {expect} from 'chai';
 import Adaptor from '../src';
-const { execute, event, dataElement } = Adaptor;
-
-import request from 'superagent';
-import superagentMock from 'superagent-mock';
-import ClientFixtures, { fixtures } from './ClientFixtures'
+const {execute, send} = Adaptor;
+import {fields, field} from 'language-common';
 
 describe("execute", () => {
 
-  it("executes each operation in sequence", (done) => {
-    let state = {}
-    let operations = [
-      (state) => { return {counter: 1} },
-      (state) => { return {counter: 2} },
-      (state) => { return {counter: 3} }
-    ]
-
-    execute(...operations)(state)
-    .then((finalState) => {
-      expect(finalState).to.eql({ counter: 3 })
-    })
-    .then(done).catch(done)
-
-
-  })
-
-  it("assigns references, data to the initialState", () => {
-    let state = {}
-
-    let finalState = execute()(state)
-
-    execute()(state)
-    .then((finalState) => {
-      expect(finalState).to.eql({
-        references: [],
-        data: null
-      })
-    })
-
-  })
-})
-
-describe("event", () => {
-  let mockRequest
-
-  before(() => {
-    mockRequest = superagentMock(request, ClientFixtures)
-  })
-
-  it("posts to API and returns state", () => {
+  it("sends an Email and expects a confirmation response", (done) => {
     let state = {
       configuration: {
-        username: "hello",
-        password: "there",
-        apiUrl: 'https://play.mailgun.org/demo'
-      }
-    };
+        "apiKey": "key-e5f5d6dd3f516de19e46dc1554d2d714",
+        "domain": "sandbox7b016987bd5f414aa72dcbc5c672f279.mailgun.org"
+      },
+      data: {}
+    }
 
-    return execute(
-      event(fixtures.event.requestBody)
+    execute(
+      send(
+        fields(
+          field('from', 'Test Mailgun <postmaster@sandbox7b016987bd5f414aa72dcbc5c672f279.mailgun.org>'),
+          field('to', 'santiago@openfn.org'),
+          field('subject', 'Test language-mailgun Mail'),
+          field('text', 'This email checks that language-mailgun send method is working')
+        )
+      )
     )(state)
-    .then((state) => {
-      let lastReference = state.references[0]
-
-      // Check that the eventData made it's way to the request as a string.
-      expect(lastReference.params).
-        to.eql(JSON.stringify(fixtures.event.requestBody))
-
-    })
+    .then((finalState) => {
+      expect(finalState.data.id)
+    }).then(done).catch(done)
 
   })
 
-  after(() => {
-    mockRequest.unset()
-  })
-
-})
-
-describe("dataElement", function() {
-  it("creates a on dataElement object object", function() {
-    let result = dataElement("key", function() { return "foo" })()
-
-    expect(result).to.eql({ dataElement: "key", value: "foo" })
-  })
 })
