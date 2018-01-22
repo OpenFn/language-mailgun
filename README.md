@@ -11,12 +11,13 @@ Documentation
 
 ## send
 ```js
-send({
-  from: 'Taylor <taylor@openfn.org>',
-  to: 'someone@openfn.org',
-  subject: 'Hello',
-  text: 'Hi buddy!'
-});
+send(
+  fields(
+    field('from', 'from_email'),
+    field('to', 'to_email'),
+    field('subject', 'Your Subject'),
+    field('text', 'Your message goes here')
+  ))
 ```
 
 [Docs](docs/index)

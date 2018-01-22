@@ -1,16 +1,6 @@
-import {
-  execute as commonExecute,
-  expandReferences
-} from 'language-common';
-import {
-  post,
-  put
-} from './Client';
-import {
-  resolve as resolveUrl
-} from 'url';
-
 /** @module Adaptor */
+import {execute as commonExecute, expandReferences, composeNextState} from 'language-common';
+import Mailgun from 'mailgun-js'
 
 /**
  * Execute a sequence of operations.
@@ -40,42 +30,48 @@ export function execute(...operations) {
 
 /**
  * Create an event
+ * @public
  * @example
- * execute(
- *   event(eventData)
- * )(state)
- * @constructor
- * @param {object} eventData - Payload data for the event
- * @returns {Operation}
+ * send(
+ *  fields(
+ *    field('from', 'from_email'),
+ *    field('to', 'to_email'),
+ *    field('subject', 'Your Subject'),
+ *    field('text', 'Your message goes here')
+ * ))
+ * @function
+ * @param {object} params - Params for sending an email
  */
-export function send(eventData) {
+export function send(params) {
 
   return state => {
-    const body = expandReferences(eventData)(state);
+    const body = expandReferences(params)(state);
 
     const {
-      username,
-      password,
-      apiUrl
+      apiKey,
+      domain
     } = state.configuration;
 
-    const url = resolveUrl(apiUrl + '/', 'api/events')
+    const mailgun = new Mailgun({apiKey: apiKey, domain: domain})
 
-    console.log("Send mail:");
-    console.log(body)
+    console.log("Sending mail:");
 
-    return post({
-        username,
-        password,
-        body,
-        url
-      })
-      .then((result) => {
-        console.log("Success:", result);
-        return {...state,
-          references: [result, ...state.references]
-        }
-      })
+    return new Promise((resolve, reject) => {
+
+      mailgun.messages().send(body,
+        (error, response) => {
+          if(error) {
+            console.error(error)
+            reject(error)
+          } else {
+            console.log(response);
+            resolve(response)
+          }
+        })
+    }).then((response) => {
+      const nextState = composeNextState(state, response);
+      return nextState;
+    })
 
   }
 }
