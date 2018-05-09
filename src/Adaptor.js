@@ -1,6 +1,9 @@
 /** @module Adaptor */
 import {execute as commonExecute, expandReferences, composeNextState} from 'language-common';
-import Mailgun from 'mailgun-js'
+import Mailgun from 'mailgun-js';
+// NOTE: We can use sync-request because the Node sandbox the client uses will
+// be killed after 300s, regardless of whether this succeeds, fails, or hangs.
+import request from 'sync-request';
 
 /**
  * Execute a sequence of operations.
@@ -32,18 +35,20 @@ export function execute(...operations) {
  * Create an event
  * @public
  * @example
- * send(
- *  fields(
- *    field('from', 'from_email'),
- *    field('to', 'to_email'),
- *    field('subject', 'Your Subject'),
- *    field('text', 'Your message goes here')
- * ))
+ * send({
+ *   from: 'from_email',
+ *   to: 'to_email',
+ *   subject: 'Your Subject',
+ *   text: 'Your message goes here',
+ *   attachment: {
+ *     url: 'www.google.com/doodle.png',
+ *     filename: 'forYou.png',
+ *   },
+ * })
  * @function
  * @param {object} params - Params for sending an email
  */
 export function send(params) {
-
   return state => {
     const body = expandReferences(params)(state);
 
@@ -53,6 +58,15 @@ export function send(params) {
     } = state.configuration;
 
     const mailgun = new Mailgun({apiKey: apiKey, domain: domain})
+
+    if (body.attachment) {
+      const response = request('GET', body.attachment.url);
+      console.log(response);
+      var attch = new mailgun.Attachment({
+        data: response.body, filename: body.attachment.filename
+      });
+      body.attachment = attch
+    }
 
     console.log("Sending mail:");
 
@@ -72,7 +86,7 @@ export function send(params) {
       const nextState = composeNextState(state, response);
       return nextState;
     })
-
+    
   }
 }
 
