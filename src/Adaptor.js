@@ -1,7 +1,6 @@
 /** @module Adaptor */
 import {execute as commonExecute, expandReferences, composeNextState} from 'language-common';
 import Mailgun from 'mailgun-js';
-import tmp from 'tmp';
 // NOTE: We can use sync-request because the Node sandbox the client uses will
 // be killed after 300s, regardless of whether this succeeds, fails, or hangs.
 import request from 'sync-request';
@@ -38,7 +37,7 @@ export function execute(...operations) {
  * @example
  * send({
  *   from: 'from_email',
- *   to: to_email',
+ *   to: 'to_email',
  *   subject: 'Your Subject',
  *   text: 'Your message goes here',
  *   attachment: {
@@ -87,6 +86,7 @@ export function send(params) {
       const nextState = composeNextState(state, response);
       return nextState;
     })
+    
   }
 }
 
