@@ -1,6 +1,6 @@
 {
   "name": "language-mailgun",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "mailgun Language Pack for OpenFn",
   "main": "lib/index.js",
   "scripts": {
@@ -15,7 +15,8 @@
   ],
   "dependencies": {
     "language-common": "github:openfn/language-common",
-    "mailgun-js": "^0.14.1"
+    "mailgun-js": "^0.14.1",
+    "sync-request": "^6.0.0"
   },
   "devDependencies": {
     "assertion-error": "^1.0.1",
