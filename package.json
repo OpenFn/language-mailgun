@@ -1,6 +1,6 @@
 {
   "name": "language-mailgun",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "mailgun Language Pack for OpenFn",
   "main": "lib/index.js",
   "scripts": {
