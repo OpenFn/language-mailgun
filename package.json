@@ -1,34 +1,52 @@
 {
-  "name": "language-mailgun",
+  "name": "@openfn/language-mailgun",
   "version": "0.2.1",
   "description": "mailgun Language Pack for OpenFn",
   "main": "lib/index.js",
   "scripts": {
-    "build": "make",
-    "test": "mocha --compilers js:babel-core/register",
-    "test:watch": "mocha -w --compilers js:babel-core/register"
+    "ast": "simple-ast --adaptor ./src/Adaptor.js --output ast.json",
+    "build": "node_modules/.bin/babel src -d lib && npm run ast",
+    "postversion": "git push && git push --tags",
+    "test": "mocha --require @babel/register",
+    "test:watch": "mocha -w --require @babel/register",
+    "version": "npm run build && git add -A lib ast.json"
   },
   "author": "Open Function Group",
   "license": "LGPLv3",
   "files": [
-    "lib/"
+    "lib/",
+    "ast.json"
   ],
   "dependencies": {
-    "language-common": "github:openfn/language-common",
-    "mailgun-js": "^0.14.1",
+    "@openfn/language-common": "^1.6.2",
+    "mailgun-js": "^0.22.0",
     "sync-request": "^6.0.0"
   },
   "devDependencies": {
+    "@openfn/simple-ast": "^0.3.2",
     "assertion-error": "^1.0.1",
-    "babel": "^6.0.15",
-    "babel-cli": "^6.1.2",
-    "babel-core": "^6.1.2",
-    "babel-preset-es2015": "^6.1.2",
-    "babel-preset-stage-0": "^6.3.13",
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-function-bind": "^7.8.3",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/preset-stage-0": "^7.8.3",
+    "@babel/register": "^7.9.0",
     "chai": "^3.4.0",
     "deep-eql": "^0.1.3",
     "mocha": "^2.3.3",
     "sinon": "^1.17.2",
     "superagent-mock": "^1.10.0"
-  }
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/openfn/language-mailgun.git"
+  },
+  "bundledDependencies": [
+    "language-common",
+    "mailgun-js",
+    "sync-request"
+  ]
 }
