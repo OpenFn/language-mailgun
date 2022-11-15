@@ -9,6 +9,15 @@ the mailgun API.
 Documentation
 -------------
 
+## Sample configuration
+
+```json
+{
+  "domain": "http://mailgun.com/domain",
+  "apiKey": "mailgunapikey"
+}
+```
+
 ## send
 ```js
 send(
