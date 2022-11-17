@@ -1,4 +1,9 @@
-Language Mailgun
+# _⚠️ MOVED TO [OpenFn/adaptors](https://github.com/OpenFn/adaptors)! ⚠️_
+
+**N.B.: New versions are available at:
+https://github.com/OpenFn/adaptors/tree/main/packages/mailgun**
+
+# Language Mailgun (Archived)
 ================
 
 Language Pack for building expressions and operations for working with
